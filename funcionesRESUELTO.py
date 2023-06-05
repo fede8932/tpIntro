@@ -76,6 +76,8 @@ def Puntos(candidata):
         return 6
     elif longitud==7:
         return 10
+    else:
+        return 0
 
 #busca en el diccionario paralabras correctas y devuelve una lista de estas
 def dameAlgunasCorrectas(letraPrincipal, letrasEnPantalla, diccionario):
