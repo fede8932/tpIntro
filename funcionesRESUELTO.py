@@ -2,6 +2,7 @@ from principal import *
 from configuracion import *
 import random
 import math
+import pygame
 
 #lee el archivo y carga en la lista diccionario todas las palabras
 def lectura(diccionario):
@@ -49,11 +50,18 @@ def dameLetra(letrasEnPantalla):
     return letra
 
 #si es valida la palabra devuelve puntos sino resta.
-def procesar(letraPrincipal, letrasEnPantalla, candidata, diccionario):
+def procesar(letraPrincipal, letrasEnPantalla, candidata, diccionario, palabrasAcertadas, puntos):
+    if candidata in palabrasAcertadas:
+        return puntos
+
     if esValida(letraPrincipal, letrasEnPantalla, candidata, diccionario):
-        return Puntos(candidata)
+        puntos += Puntos(candidata)
+        palabrasAcertadas.add(candidata) #agrega el elemento al conjunto
     else:
-        return -1
+        puntos -= 1
+
+    return puntos
+
 
 #chequea que se use la letra principal, solo use letras de la pantalla y
 #exista en el diccionario
@@ -74,7 +82,7 @@ def Puntos(candidata):
         return 5
     elif longitud==6:
         return 6
-    elif longitud==7:
+    elif longitud>=7:
         return 10
     else:
         return 0
@@ -85,5 +93,17 @@ def dameAlgunasCorrectas(letraPrincipal, letrasEnPantalla, diccionario):
     for palabra in diccionario:
         if all(letra in letrasEnPantalla for letra in palabra) and letraPrincipal in palabra:
             combinaciones_correctas.append(palabra)
-    print("palabras", combinaciones_correctas)
+    # print("palabras", combinaciones_correctas)
     return combinaciones_correctas
+
+#muestra las palabras correctas que acierta el usuario
+
+def Correctas(screen, palabrasAcertadas):
+    font = pygame.font.Font(None, 36)
+    ren = font.render("Palabras Correctas:", 1, COLOR_TEXTO)
+    screen.blit(ren, (10, 10))
+
+    for i, palabra in enumerate(palabrasAcertadas):
+        ren = font.render(palabra, 1, COLOR_TEXTO)
+        screen.blit(ren, (10, 50 + i * 30))
+

@@ -56,25 +56,41 @@ def dameLetraApretada(key):
     elif key == K_z:
         return("z")
     elif key == K_SPACE:
-       return(" ")
+        return(" ")
     else:
         return("")
 
-def dibujar(screen, letraPrincipal, letrasEnPantalla, candidata, puntos, segundos):
+import pygame
+from pygame.locals import *
+from configuracion import *
 
-    defaultFont= pygame.font.Font( pygame.font.get_default_font(), 20)
-    defaultFontGrande= pygame.font.Font( pygame.font.get_default_font(), 80)
+import pygame
+from pygame.locals import *
+from configuracion import *
 
-    #Linea del piso
-    pygame.draw.line(screen, (255,255,255), (0, ALTO-70) , (ANCHO, ALTO-70), 5)
+import pygame
+from pygame.locals import *
+from configuracion import *
+
+import pygame
+from pygame.locals import *
+from configuracion import *
+
+def dibujar(screen, letraPrincipal, letrasEnPantalla, candidata, puntos, segundos, palabrasAcertadas):
+    defaultFont = pygame.font.Font(pygame.font.get_default_font(), 20)
+    defaultFontGrande = pygame.font.Font(pygame.font.get_default_font(), 80)
+
+    # Línea del piso
+    pygame.draw.line(screen, (255, 255, 255), (0, ALTO-70), (ANCHO, ALTO-70), 5)
 
     ren1 = defaultFont.render(candidata, 1, COLOR_TEXTO)
     ren2 = defaultFont.render("Puntos: " + str(puntos), 1, COLOR_TEXTO)
-    if(segundos<15):
+    if segundos < 15:
         ren3 = defaultFont.render("Tiempo: " + str(int(segundos)), 1, COLOR_TIEMPO_FINAL)
     else:
         ren3 = defaultFont.render("Tiempo: " + str(int(segundos)), 1, COLOR_TEXTO)
-    #escribe grande la palabra (letra por letra) y la letra principal de otro color
+
+    # Escribe grande la palabra (letra por letra) y la letra principal de otro color
     pos = 130
     for i in range(len(letrasEnPantalla)):
         if letrasEnPantalla[i] == letraPrincipal:
@@ -86,3 +102,21 @@ def dibujar(screen, letraPrincipal, letrasEnPantalla, candidata, puntos, segundo
     screen.blit(ren1, (190, 570))
     screen.blit(ren2, (680, 10))
     screen.blit(ren3, (10, 10))
+
+#configuracion de las palabras acertadas posicion y altura.
+def dibujarPalabras(screen, palabrasAcertadas):
+    defaultFont = pygame.font.Font(pygame.font.get_default_font(), 20)
+
+    pos_x = 10
+    pos_y = ALTO - 100
+
+    for i, palabra in enumerate(palabrasAcertadas):
+        ren_palabra = defaultFont.render(str(i+1) + ". " + palabra, 1, COLOR_TEXTO)
+        palabra_width = ren_palabra.get_width()
+
+        if pos_x + palabra_width > ANCHO - 10:
+            pos_x = 10
+            pos_y -= 20
+
+        screen.blit(ren_palabra, (pos_x, pos_y))
+        pos_x += palabra_width + 10

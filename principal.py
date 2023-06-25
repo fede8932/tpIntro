@@ -1,9 +1,7 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 import os, random, sys, math
-
 import pygame
 from pygame.locals import *
-
 from configuracion import *
 from funcionesRESUELTO import *
 from extras import *
@@ -23,11 +21,11 @@ def main():
     totaltime = 0
     segundos = TIEMPO_MAX
     fps = FPS_inicial
-
     puntos = 0
     candidata = ""
     diccionario = []
-    palabrasAcertadas = []
+    palabrasAcertadas = set()  # Conjunto para almacenar las palabras acertadas
+
 
     # Lee el diccionario
     lectura(diccionario)
@@ -44,7 +42,7 @@ def main():
     print(dameAlgunasCorrectas(letraPrincipal, letrasEnPantalla, diccionario))
 
     # Dibuja la pantalla la primera vez
-    dibujar(screen, letraPrincipal, letrasEnPantalla, candidata, puntos, segundos)
+    dibujar(screen, letraPrincipal, letrasEnPantalla, candidata, puntos, segundos, palabrasAcertadas)
 
     while segundos > fps / 1000:
         # 1 frame cada 1/fps segundos
@@ -52,7 +50,7 @@ def main():
         totaltime += gameClock.get_time()
 
         if True:
-            fps = 3
+            fps = 30
 
         # Buscar la tecla apretada del módulo de eventos de pygame
         for e in pygame.event.get():
@@ -60,7 +58,7 @@ def main():
             # QUIT es apretar la X en la ventana
             if e.type == QUIT:
                 pygame.quit()
-                return ()
+                return
 
             # Ver si fue apretada alguna tecla
             if e.type == KEYDOWN:
@@ -69,8 +67,9 @@ def main():
                 if e.key == K_BACKSPACE:
                     candidata = candidata[0:len(candidata) - 1]  # borra la última
                 if e.key == K_RETURN:  # presionó enter
-                    puntos += procesar(letraPrincipal, letrasEnPantalla, candidata, diccionario)
+                    puntos = procesar(letraPrincipal, letrasEnPantalla, candidata, diccionario, palabrasAcertadas, puntos)
                     candidata = ""
+
 
         segundos = TIEMPO_MAX - pygame.time.get_ticks() / 1000
 
@@ -78,7 +77,9 @@ def main():
         screen.fill(COLOR_FONDO)
 
         # Dibujar de nuevo todo
-        dibujar(screen, letraPrincipal, letrasEnPantalla, candidata, puntos, segundos)
+        dibujar(screen, letraPrincipal, letrasEnPantalla, candidata, puntos, segundos, palabrasAcertadas)
+        #muestra las palabras acertadas 
+        dibujarPalabras(screen, palabrasAcertadas)
 
         pygame.display.flip()
 
@@ -88,7 +89,9 @@ def main():
             if e.type == QUIT:
                 pygame.quit()
                 return
-
+            
 # Programa Principal ejecuta Main
 if __name__ == "__main__":
     main()
+
+
